@@ -1,0 +1,54 @@
+
+MarkItDown is a Microsoft library that converts various document formats into Markdown format.
+
+MarkItDown = "Convert anything to Markdown"
+Markdig = "Process Markdown intelligently"
+
+MarkItDown - Converts PDFs, Word, etc. → Markdown
+Markdig - Processes and validates the Markdown
+
+Converts multiple file formats to Markdown:
+
+PDF files
+Word documents (.docx)
+PowerPoint presentations (.pptx)
+Images (with OCR support)
+Text files
+Web pages
+Excel files
+And more
+Preserves structure:
+
+Headers
+Lists
+Tables
+Links
+Formatting
+Handles complex content:
+
+Images (converts to alt text)
+Code blocks
+Metadata
+
+
+Together they enable your pipeline to:
+
+Accept documents in any format
+Convert to unified Markdown
+Process intelligently
+Chunk efficiently
+Generate embeddings
+Store in CosmosDB
+
+
+Input Document (PDF, Word, etc.)
+    ↓
+MarkItDown (Convert to Markdown)
+    ↓
+Unified Markdown Format
+    ↓
+Markdig (Parse & Process)
+    ↓
+Structured Content (AST)
+    ↓
+Your Pipeline (Chunking, Processing)
