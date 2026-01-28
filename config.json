@@ -1,0 +1,104 @@
+{
+  "version": "1.0",
+  "name": "MSDATAIngestion_RAG",
+  "description": "Complete data ingestion pipeline with CosmosDB vector storage and Azure OpenAI",
+  "dependencies": {
+    "Microsoft.Extensions.DataIngestion": "1.0.0",
+    "Microsoft.Extensions.DataIngestion.MarkItDown": "1.0.0",
+    "Microsoft.Extensions.AI": "1.0.0",
+    "Microsoft.Extensions.VectorData.Abstractions": "1.0.0",
+    "Microsoft.ML.Tokenizers": "1.0.0",
+    "Azure.AI.OpenAI": "2.0.0",
+    "Azure.Cosmos": "4.0.0",
+    "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
+  },
+  "environment_variables": {
+    "AZURE_OPENAI_ENDPOINT": "https://<your-resource>.openai.azure.com/",
+    "AZURE_OPENAI_KEY": "<your-api-key>",
+    "COSMOS_DB_CONNECTION_STRING": "AccountEndpoint=https://<your-account>.documents.azure.com:443/;AccountKey=<your-key>;",
+    "GITHUB_TOKEN": "<optional-for-github-models>"
+  },
+  "features": {
+    "chunking_strategies": [
+      {
+        "name": "HeaderBased",
+        "description": "Splits on markdown headers (H1, H2, H3)",
+        "best_for": "Technical documentation with clear structure"
+      },
+      {
+        "name": "SectionBased",
+        "description": "Splits on section boundaries (pages, paragraphs)",
+        "best_for": "Long documents with natural breaks"
+      },
+      {
+        "name": "SemanticAware",
+        "description": "Preserves complete thoughts intelligently",
+        "best_for": "Complex documents requiring context preservation"
+      }
+    ],
+    "document_processors": [
+      "ImageAlternativeTextEnricher"
+    ],
+    "chunk_processors": [
+      "SummaryEnricher",
+      "SentimentEnricher",
+      "KeywordEnricher",
+      "ClassificationEnricher"
+    ],
+    "vector_stores": [
+      "CosmosDB (configured)",
+      "Qdrant",
+      "Sqlite",
+      "MongoDB",
+      "ElasticSearch"
+    ]
+  },
+  "architecture": {
+    "pipeline_components": [
+      {
+        "stage": 1,
+        "name": "Document Reader",
+        "description": "Loads markdown documents from files/streams",
+        "implementation": "MarkItDownDocumentReader"
+      },
+      {
+        "stage": 2,
+        "name": "Document Processor",
+        "description": "Enriches document content (e.g., image alt text)",
+        "implementation": "ImageAlternativeTextEnricher"
+      },
+      {
+        "stage": 3,
+        "name": "Chunker",
+        "description": "Splits documents into smaller chunks",
+        "implementations": [
+          "HeaderChunker",
+          "SectionChunker",
+          "SemanticChunker"
+        ]
+      },
+      {
+        "stage": 4,
+        "name": "Chunk Processor",
+        "description": "Enriches chunks with summaries, sentiment, keywords",
+        "implementations": [
+          "SummaryEnricher",
+          "SentimentEnricher",
+          "KeywordEnricher"
+        ]
+      },
+      {
+        "stage": 5,
+        "name": "Embedding Generator",
+        "description": "Generates vector embeddings for chunks",
+        "implementation": "Azure OpenAI (text-embedding-3-small)"
+      },
+      {
+        "stage": 6,
+        "name": "Vector Store Writer",
+        "description": "Stores chunks with embeddings in CosmosDB",
+        "implementation": "CosmosDBChunkWriter"
+      }
+    ]
+  }
+}
